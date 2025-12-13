@@ -73,3 +73,29 @@ crashlytics-build.properties
 # Temporary auto-generated Android Assets
 /[Aa]ssets/[Ss]treamingAssets/aa.meta
 /[Aa]ssets/[Ss]treamingAssets/aa/*
+
+# ===================================================================
+# CUSTOM: Ignore all other root-level folders except the essentials
+# ===================================================================
+
+# Ignore everything at root
+/*
+
+# Explicitly allow only these folders
+!/[Aa]ssets/
+!/[Pp]ackages/
+!/[Pp]rojectSettings/
+
+# Allow important root files
+!/.gitignore
+!/README.md
+!/README.txt
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
