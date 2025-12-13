@@ -50,7 +50,7 @@ public class PatternGridGenerator : MonoBehaviour
             }
         }
     }
-    void BuildPattern(int rows, int columns)
+    public void BuildPattern(int rows, int columns)
     {
         this.rows = rows;
         this.columns = columns;

@@ -133,6 +133,7 @@ GameObject:
   - component: {fileID: 18025443}
   - component: {fileID: 18025442}
   - component: {fileID: 18025444}
+  - component: {fileID: 18025445}
   m_Layer: 0
   m_Name: CardController
   m_TagString: Untagged
@@ -175,6 +176,7 @@ MonoBehaviour:
   turnText: {fileID: 1633530131}
   scoreText: {fileID: 1486126898}
   bestscoreText: {fileID: 1423842515}
+  id: 0
 --- !u!4 &18025443
 Transform:
   m_ObjectHideFlags: 0
@@ -210,6 +212,20 @@ MonoBehaviour:
   controller: {fileID: 18025442}
   menuObj: {fileID: 26891443}
   gameObj: {fileID: 92134519}
+--- !u!114 &18025445
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 18025441}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b4ee090e1e0abbd4381b2b15d61a9f85, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  gridGenerator: {fileID: 18025444}
+  controller: {fileID: 18025442}
 --- !u!1 &26891443
 GameObject:
   m_ObjectHideFlags: 0

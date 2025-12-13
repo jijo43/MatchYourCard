@@ -29,6 +29,7 @@ public class CardController : MonoBehaviour
     public int id;// game id
     int bestScore;
 
+
     public void StartWithID(int id)
     {
         this.id = id;
@@ -73,6 +74,7 @@ public class CardController : MonoBehaviour
                     .OnComplete(() =>
                      {
                          SaveBestScore(turnCount);
+                         GetComponent<PersistenceController>().ClearSave();
                          GetComponent<PatternGridGenerator>().Home();
                      });
               
