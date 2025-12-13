@@ -28,8 +28,20 @@ public class CardController : MonoBehaviour
 
     public int id;// game id
     int bestScore;
+    public bool gameOver;
 
+    CardGameAudio audioManager;
+    PersistenceController persistenceController;
 
+    public string GetCurrentGameKey()
+    {
+        return CurrentGame[id];
+    }
+    private void Start()
+    {
+        audioManager = GetComponent<CardGameAudio>();
+        persistenceController = GetComponent<PersistenceController>();
+    }
     public void StartWithID(int id)
     {
         this.id = id;
@@ -44,11 +56,13 @@ public class CardController : MonoBehaviour
             if (firstSelected == null)
             {
                 firstSelected = card;
+                audioManager.PlayFlip();
                 return;
             }
             if (secondSelected == null)
             {
                 secondSelected = card;
+                audioManager.PlayFlip();
                 StartCoroutine(CheckMatch(firstSelected,secondSelected));
                
             }
@@ -63,12 +77,20 @@ public class CardController : MonoBehaviour
         if (firstSelected.pokemonImg == secondSelected.pokemonImg)
         {
             // Match found
+            audioManager.PlayMatch();
             matchedCount++;
             scoreText.text = "Score: " + "\n" + matchedCount;
-            if (matchedCount >= spritePairs.Count/2)
+            if (matchedCount >= (spritePairs.Count/2))
             {
+                gameOver = true;
                 Debug.Log("You Win!");
+                float clipDuration = 1f;
                 PrimeTween.Sequence.Create()
+                    .ChainDelay(clipDuration)
+                    .ChainCallback(() =>
+                    {
+                        audioManager.PlayGameOver();
+                    })
                     .Chain(PrimeTween.Tween.Scale(gridTransform, Vector3.one * 1.2f, 0.2f, ease: PrimeTween.Ease.OutBack))
                     .Chain(PrimeTween.Tween.Scale(gridTransform, Vector3.zero, 0.1f))
                     .OnComplete(() =>
@@ -90,13 +112,31 @@ public class CardController : MonoBehaviour
         else
         {
             // No match
-            
+            audioManager.PlayMismatch();
             firstSelected.Hide();
             secondSelected.Hide();
             firstSelected = null;
             secondSelected = null;
 
         }
+    }
+
+    public void ResetOpenCard()
+    {
+        if (firstSelected != null)
+        {
+            firstSelected.Hide();
+            firstSelected = null;
+        }
+        if (secondSelected != null)
+        {
+            secondSelected.Hide();
+            secondSelected = null;
+        }
+    }
+    public void ReveleadFromLoad(Card card)
+    {
+        firstSelected = card;
     }
 
     #region SaveScore

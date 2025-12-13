@@ -7,6 +7,7 @@ public class CardState
     public string spriteName;
     public bool isMatched;
     public bool isRevealed;
+   
 }
 
 [System.Serializable]
@@ -18,6 +19,8 @@ public class GameState
 
     public int turnCount;
     public int matchedCount;
+
+    public bool isGameOver;
 
     public List<CardState> cards;
 }

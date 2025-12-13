@@ -6,8 +6,8 @@ using UnityEngine.UI;
 public class PatternGridGenerator : MonoBehaviour
 {
     [Header("Grid")]
-    public int rows = 4;
-    public int columns = 5;
+    public int rows;
+    public int columns ;
 
     [Header("References")]
     public GridLayoutGroup grid;
@@ -56,7 +56,8 @@ public class PatternGridGenerator : MonoBehaviour
         this.columns = columns;
         menuObj.SetActive(false);
         gameObj.SetActive(true);
-
+        Debug.Log($"Building pattern {rows}x{columns}");
+        Debug.Log($"Building pattern {this.rows}x{this.columns}");
         if (rows == 4 && columns == 5)
         {
             // Special case: 5x4 pattern (reference image)
@@ -142,6 +143,7 @@ public class PatternGridGenerator : MonoBehaviour
                     view.SetPokemon(controller.spritePairs[cardIndex]);
                     view.CardIndex = cardIndex;
                     view.controller = controller;
+                    view.transform.localScale = new Vector3(-1, 1, 1);
 
                     cardIndex++;
                     Debug.Log("Card instantiated");
@@ -167,21 +169,64 @@ public class PatternGridGenerator : MonoBehaviour
 
     public void Build2X2() {
         BuildPattern(2, 2);
-        controller.StartWithID(0);
+        controller.id = 0;
+        Debug.Log("Starting game with ID 0");
+        if (GetComponent<PersistenceController>().isGamePending())
+        {
+            Debug.Log("Loading saved game...");
+            GetComponent<PersistenceController>().LoadGame();
+        }
+        else
+        {
+            controller.StartWithID(0);
+            return;
+        }
+           
+        
     }
     public void Build2X4()
     {
         BuildPattern(2, 4);
-        controller.StartWithID(1);
+        controller.id = 1;
+        if (GetComponent<PersistenceController>().isGamePending())
+        {
+            Debug.Log("Loading saved game...");
+            GetComponent<PersistenceController>().LoadGame();
+        }
+        else
+        {
+            controller.StartWithID(1);
+            return;
+        }
     }
     public void Build4X4()
     {
         BuildPattern(4, 4);
-        controller.StartWithID(2);
+        controller.id = 2;
+        if (GetComponent<PersistenceController>().isGamePending())
+        {
+            Debug.Log("Loading saved game...");
+            GetComponent<PersistenceController>().LoadGame();
+        }
+        else
+        {
+            controller.StartWithID(2);
+            return;
+        }
     }
     public void Build4X5()
     {
         BuildPattern(4, 5);
-        controller.StartWithID(3);
+        controller.id = 3;
+        if (GetComponent<PersistenceController>().isGamePending())
+        {
+            Debug.Log("Loading saved game...");
+            GetComponent<PersistenceController>().LoadGame();
+        }
+        else
+        {
+            controller.StartWithID(3);
+            return;
+        }
     }
 }

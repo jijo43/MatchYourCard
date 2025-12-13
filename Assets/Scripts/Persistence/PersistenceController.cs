@@ -8,10 +8,7 @@ public class PersistenceController : MonoBehaviour
     public PatternGridGenerator gridGenerator;
     public CardController controller;
 
-    private void Awake()
-    {
-        LoadGame();
-    }
+    
     void OnApplicationPause(bool pause)
     {
         if (pause)
@@ -26,6 +23,12 @@ public class PersistenceController : MonoBehaviour
     //Save
     public void SaveGame()
     {
+        if (controller.gameOver)
+            return;
+
+        Debug.Log("Saving game...");
+        Debug.Log("Rows: " + gridGenerator.rows + ", Columns: " + gridGenerator.columns);
+        controller.ResetOpenCard();
         GameState state = new GameState
         {
             rows = gridGenerator.rows,
@@ -33,6 +36,7 @@ public class PersistenceController : MonoBehaviour
             gameId = controller.id,
             turnCount = controller.turnCount,
             matchedCount = controller.matchedCount,
+            isGameOver = controller.gameOver,
             cards = new List<CardState>()
         };
 
@@ -46,25 +50,32 @@ public class PersistenceController : MonoBehaviour
                 spriteName = card.pokemonImg.name,
                 isMatched = card.iconImage.color == Color.gray,
                 isRevealed = card.isSelected
+                
             };
 
             state.cards.Add(cs);
         }
 
         string json = JsonUtility.ToJson(state);
-        PlayerPrefs.SetString(SAVE_KEY, json);
+        string key = SAVE_KEY + controller.GetCurrentGameKey();
+        Debug.Log("Saving game with key: " + key);
+        PlayerPrefs.SetString(key, json);
         PlayerPrefs.Save();
 
         Debug.Log("Game Saved");
     }
-
+    public bool isGamePending()
+    {
+        Debug.Log("Checking for save key: " + (SAVE_KEY + controller.GetCurrentGameKey())+ PlayerPrefs.HasKey(SAVE_KEY + controller.GetCurrentGameKey()));
+        return PlayerPrefs.HasKey(SAVE_KEY + controller.GetCurrentGameKey());
+    }
     // Load
     public bool LoadGame()
     {
-        if (!PlayerPrefs.HasKey(SAVE_KEY))
+        if (!PlayerPrefs.HasKey(SAVE_KEY+controller.GetCurrentGameKey()))
             return false;
-
-        string json = PlayerPrefs.GetString(SAVE_KEY);
+        Debug.Log("Loading game with key: " + (SAVE_KEY + controller.GetCurrentGameKey()));
+        string json = PlayerPrefs.GetString(SAVE_KEY + controller.GetCurrentGameKey());
         GameState state = JsonUtility.FromJson<GameState>(json);
 
         // Build grid
@@ -100,6 +111,7 @@ public class PersistenceController : MonoBehaviour
                 card.frontFace.SetActive(true);
                 card.backFace.SetActive(false);
                 card.isSelected = true;
+                controller.ReveleadFromLoad(card);
             }
             else
             {
@@ -116,6 +128,6 @@ public class PersistenceController : MonoBehaviour
     // Clear
     public void ClearSave()
     {
-        PlayerPrefs.DeleteKey(SAVE_KEY);
+        PlayerPrefs.DeleteKey(SAVE_KEY + controller.GetCurrentGameKey());
     }
 }
