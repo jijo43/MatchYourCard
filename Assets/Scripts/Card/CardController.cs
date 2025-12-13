@@ -17,6 +17,7 @@ public class CardController : MonoBehaviour
 
     public int matchedCount;
     public int turnCount;
+    public int totalPairs;
 
 
     public TMPro.TMP_Text turnText;
@@ -80,13 +81,13 @@ public class CardController : MonoBehaviour
             audioManager.PlayMatch();
             matchedCount++;
             scoreText.text = "Score: " + "\n" + matchedCount;
-            if (matchedCount >= (spritePairs.Count/2))
+            if (matchedCount >= (totalPairs))
             {
                 gameOver = true;
                 Debug.Log("You Win!");
-                float clipDuration = 1f;
+         
                 PrimeTween.Sequence.Create()
-                    .ChainDelay(clipDuration)
+                  
                     .ChainCallback(() =>
                     {
                         audioManager.PlayGameOver();
@@ -119,6 +120,31 @@ public class CardController : MonoBehaviour
             secondSelected = null;
 
         }
+    }
+    public void HandleWinFromLoad()
+    {
+        // Prevent double execution
+        if (gameOver) return;
+        gameOver = true;
+
+        PrimeTween.Sequence.Create()
+            .ChainCallback(() => audioManager.PlayGameOver())
+            .Chain(PrimeTween.Tween.Scale(
+                gridTransform,
+                Vector3.one * 1.1f,
+                0.15f
+            ))
+            .Chain(PrimeTween.Tween.Scale(
+                gridTransform,
+                Vector3.zero,
+                0.1f
+            ))
+            .OnComplete(() =>
+            {
+                SaveBestScore(turnCount);
+                GetComponent<PersistenceController>().ClearSave();
+                GetComponent<PatternGridGenerator>().Home();
+            });
     }
 
     public void ResetOpenCard()

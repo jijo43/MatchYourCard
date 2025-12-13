@@ -7,7 +7,7 @@ public class PatternGridGenerator : MonoBehaviour
 {
     [Header("Grid")]
     public int rows;
-    public int columns ;
+    public int columns;
 
     [Header("References")]
     public GridLayoutGroup grid;
@@ -36,6 +36,7 @@ public class PatternGridGenerator : MonoBehaviour
     {
        // menuObj.SetActive(true);
         //gameObj.SetActive(false);
+        
         SceneManager.LoadScene(0);
     }
     void BuildFullGridPattern(int rows, int columns)
@@ -50,14 +51,14 @@ public class PatternGridGenerator : MonoBehaviour
             }
         }
     }
-    public void BuildPattern(int rows, int columns)
+    public void BuildPattern(int r, int c)
     {
-        this.rows = rows;
-        this.columns = columns;
+        rows = r;
+        columns = c;
         menuObj.SetActive(false);
         gameObj.SetActive(true);
         Debug.Log($"Building pattern {rows}x{columns}");
-        Debug.Log($"Building pattern {this.rows}x{this.columns}");
+        Debug.Log($"Building pattern {r}x{c}");
         if (rows == 4 && columns == 5)
         {
             // Special case: 5x4 pattern (reference image)
@@ -105,6 +106,7 @@ public class PatternGridGenerator : MonoBehaviour
         }
 
         int pairsNeeded = totalCells / 2;
+        
 
         if (controller.allSprites.Count < pairsNeeded)
         {
@@ -144,6 +146,7 @@ public class PatternGridGenerator : MonoBehaviour
                     view.CardIndex = cardIndex;
                     view.controller = controller;
                     view.transform.localScale = new Vector3(-1, 1, 1);
+                    
 
                     cardIndex++;
                     Debug.Log("Card instantiated");
@@ -155,6 +158,8 @@ public class PatternGridGenerator : MonoBehaviour
                 }
             }
         }
+
+        controller.totalPairs = controller.spritePairs.Count / 2;
     }
 
     // Fisher-Yates shuffle

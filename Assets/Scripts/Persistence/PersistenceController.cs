@@ -27,12 +27,34 @@ public class PersistenceController : MonoBehaviour
             return;
 
         Debug.Log("Saving game...");
-        Debug.Log("Rows: " + gridGenerator.rows + ", Columns: " + gridGenerator.columns);
+        string k = controller.GetCurrentGameKey();
+        Debug.Log(k);
+        int rows = 0;
+        int columns = 0;
+        switch (k)
+        {
+            case "2X2":
+                rows = 2;
+                columns = 2;
+                break;
+            case "2X4":
+                rows = 2;
+                columns = 4;
+                break;
+            case "4X4":
+                rows = 4;
+                columns = 4;
+                break;
+            case "4X5":
+                rows = 4;
+                columns = 5;
+                break;
+        }
         controller.ResetOpenCard();
         GameState state = new GameState
         {
-            rows = gridGenerator.rows,
-            columns = gridGenerator.columns,
+            rows = rows,
+            columns = columns,
             gameId = controller.id,
             turnCount = controller.turnCount,
             matchedCount = controller.matchedCount,
@@ -74,11 +96,14 @@ public class PersistenceController : MonoBehaviour
     {
         if (!PlayerPrefs.HasKey(SAVE_KEY+controller.GetCurrentGameKey()))
             return false;
+
         Debug.Log("Loading game with key: " + (SAVE_KEY + controller.GetCurrentGameKey()));
         string json = PlayerPrefs.GetString(SAVE_KEY + controller.GetCurrentGameKey());
         GameState state = JsonUtility.FromJson<GameState>(json);
-
+        string key = controller.GetCurrentGameKey();
+       
         // Build grid
+        Debug.Log("Restoring grid with rows: " + state.rows + ", columns: " + state.columns);
         gridGenerator.BuildPattern(state.rows, state.columns);
         controller.StartWithID(state.gameId);
 
@@ -120,7 +145,48 @@ public class PersistenceController : MonoBehaviour
                 card.isSelected = false;
             }
         }
+        /*int recalculatedMatchedPairs = 0;
+        List<Card> revealedButUnmatched = new List<Card>();
 
+        foreach (Card card in cards)
+        {
+            if (!card.frontFace.activeInHierarchy)
+                continue;
+
+            // Matched cards (gray)
+            if (card.iconImage.color == Color.gray)
+            {
+                recalculatedMatchedPairs++;
+            }
+            else if (card.isSelected)
+            {
+                // Revealed but not matched (possible interrupted state)
+                revealedButUnmatched.Add(card);
+            }
+        }
+
+        // Each pair has 2 cards
+        recalculatedMatchedPairs /= 2;
+
+        // Force sync controller values
+        controller.matchedCount = recalculatedMatchedPairs;
+        controller.scoreText.text = "Score:\n" + controller.matchedCount;
+
+        // Handle half-revealed edge case
+        if (revealedButUnmatched.Count == 2)
+        {
+            // Safely assign for match resolution
+            controller.ReveleadFromLoad(revealedButUnmatched[0]);
+            controller.ReveleadFromLoad(revealedButUnmatched[1]);
+        }
+
+        // ================= FINAL WIN CHECK =================
+
+        if (controller.matchedCount >= controller.totalPairs)
+        {
+            Debug.Log("Loaded game already completed — triggering win");
+            controller.HandleWinFromLoad();
+        }*/
         Debug.Log("Game Loaded");
         return true;
     }
